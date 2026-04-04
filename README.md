@@ -1,89 +1,336 @@
-# pi2-front
-📊 EduCenso
+# EduCenso Frontend
 
-Análise de dados educacionais do IBGE/INEP com foco em ODS
+Frontend da plataforma EduCenso, construído com React, TypeScript, Vite, Tailwind CSS e shadcn/ui.
 
-📌 Descrição
+O objetivo do projeto é servir como base para uma plataforma de análise de dados educacionais e socioeconômicos, com foco em dashboards, comparativos entre regiões, matriz Likert, relatórios e autenticação por usuário.
 
-O EduCenso é uma aplicação frontend desenvolvida com foco na análise de dados educacionais provenientes de bases públicas como IBGE e INEP.
+## Estado atual da aplicação
 
-O objetivo principal do projeto é identificar carências na educação brasileira com base em dados reais e propor possíveis melhorias alinhadas aos Objetivos de Desenvolvimento Sustentável (ODS) da ONU, especialmente o ODS 4 – Educação de Qualidade.
+Atualmente o frontend possui uma base funcional para autenticação e navegação da área logada:
 
-🚀 Tecnologias Utilizadas
-⚛️ React
-⚡ Vite
-🟦 TypeScript
-📦 pnpm
-🎨 Shadcn
+- login mockado
+- persistência de sessão em `localStorage`
+- rotas públicas e protegidas com `react-router-dom`
+- layout autenticado com `header` fixo e `sidebar` lateral
+- navegação inicial entre painel principal e perfil
+- página de cadastro mockada para futura integração com API
 
-/*
-📁 Estrutura do Projeto
-src/
-├── assets/           # Imagens e arquivos estáticos
-├── components/       # Componentes reutilizáveis
-├── pages/            # Páginas principais
-├── services/         # Integração com APIs (IBGE/INEP)
-├── hooks/            # Hooks customizados
-├── types/            # Tipagens TypeScript
-├── utils/            # Funções auxiliares
-└── main.tsx          # Ponto de entrada
-*/
+Credenciais mockadas atuais:
 
-O projeto utiliza dados públicos provenientes de:
+- e-mail: `admin@educenso.dev`
+- senha: `123456`
 
-IBGE (Instituto Brasileiro de Geografia e Estatística)
-INEP (Instituto Nacional de Estudos e Pesquisas Educacionais)
-Exemplos de dados analisados:
-Taxa de alfabetização
-Escolaridade média
-Taxa de evasão escolar
-Infraestrutura escolar
-Desempenho educacional (ENEM/IDEB)
+## Stack principal
 
-🎯 Objetivo
-Identificar regiões com maior vulnerabilidade educacional
-Analisar indicadores educacionais relevantes
-Correlacionar dados com metas das ODS
-Propor insights e possíveis melhorias
+- React 19
+- TypeScript
+- Vite
+- pnpm
+- Tailwind CSS
+- shadcn/ui
+- React Router DOM
+- lucide-react
 
-🌍 Alinhamento com ODS
+## Como executar
 
-Este projeto está diretamente relacionado com:
+### Requisitos
 
-ODS 4 – Educação de Qualidade
+- Node.js
+- pnpm
 
-Metas abordadas:
+### Instalação
 
-Garantir acesso à educação básica de qualidade
-Reduzir desigualdades educacionais regionais
-Melhorar indicadores de aprendizado
-
-🧠 Funcionalidades
-📈 Visualização de dados em gráficos interativos
-🗺️ Análise por região (estado/município)
-🔎 Filtros dinâmicos por indicadores
-📊 Comparação entre regiões
-💡 Geração de insights educacionais
-
-⚙️ Como Rodar o Projeto
-1. Clone o repositório
-git clone https://github.com/Y4GoD957/pi2-front.git
-cd pi2-front
-2. Instale as dependências
+```bash
 pnpm install
-3. Rode o projeto
+```
+
+### Ambiente de desenvolvimento
+
+```bash
 pnpm dev
+```
 
-O projeto estará disponível em:
-http://localhost:5173
+Aplicação disponível em `http://localhost:5173`.
 
-🧪 Scripts Disponíveis
-pnpm dev        # Inicia o servidor de desenvolvimento
-pnpm build      # Gera build de produção
-pnpm preview    # Visualiza o build
-pnpm lint       # Executa o linter
-pnpm typecheck  # Verifica tipagem TypeScript
+### Build de produção
 
-💡 Considerações Finais
+```bash
+pnpm build
+```
 
-Este projeto busca transformar dados em conhecimento prático, ajudando a visualizar problemas reais da educação brasileira e contribuindo para soluções baseadas em evidências.
+### Preview local da build
+
+```bash
+pnpm preview
+```
+
+### Lint
+
+```bash
+pnpm lint
+```
+
+## Scripts disponíveis
+
+- `pnpm dev`: inicia o servidor de desenvolvimento do Vite
+- `pnpm build`: executa `tsc -b` e gera a build de produção
+- `pnpm preview`: sobe uma visualização local da build gerada
+- `pnpm lint`: executa o ESLint no projeto
+
+## Funcionalidades implementadas hoje
+
+### Autenticação
+
+- login mockado via `src/services/auth/authService.ts`
+- validação de formulário no frontend
+- persistência de sessão em `localStorage`
+- restauração automática da sessão ao recarregar a página
+- logout com limpeza da sessão local
+
+### Navegação
+
+- redirecionamento automático entre área pública e privada
+- rotas públicas:
+  - `/login`
+  - `/register`
+- rotas protegidas:
+  - `/app`
+  - `/app/profile`
+
+### Área autenticada
+
+- `header` fixo no topo
+- `sidebar` lateral com animação de entrada e saída no desktop
+- menu móvel para telas menores
+- botão de perfil no topo
+- botão de logout no topo
+
+### Páginas base
+
+- dashboard inicial com blocos placeholder para futuras features
+- perfil com dados do usuário autenticado
+- cadastro com UI pronta para futura integração com backend
+
+## Arquitetura atual
+
+O projeto segue organização por responsabilidade e por feature.
+
+Princípios atuais:
+
+- rotas centralizadas em `src/app/routes`
+- autenticação isolada em `src/features/auth`
+- layout da área logada separado da lógica de rota
+- serviços concentrados em `src/services`
+- tipos reutilizáveis em `src/types`
+- componentes de UI base em `src/components/ui`
+
+Essa estrutura foi pensada para facilitar a substituição do mock atual por uma API real no futuro, reduzindo impacto no restante da aplicação.
+
+## Estrutura de pastas
+
+```text
+src/
+├── app/
+│   └── routes/
+├── assets/
+├── components/
+│   └── ui/
+├── features/
+│   ├── app/
+│   │   └── layouts/
+│   ├── auth/
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   └── providers/
+│   ├── dashboard/
+│   │   └── pages/
+│   └── profile/
+│       └── pages/
+├── lib/
+├── services/
+│   └── auth/
+├── types/
+├── App.tsx
+├── index.css
+└── main.tsx
+```
+
+## Responsabilidade de cada pasta
+
+### `src/app`
+
+Camada de composição global da aplicação.
+
+- `routes/`: define os caminhos, redirecionamentos e montagem principal das rotas
+
+Responsabilidade:
+- centralizar navegação global
+- evitar que `App.tsx` concentre regras demais
+
+### `src/assets`
+
+Arquivos estáticos usados pela interface.
+
+Exemplos:
+- logo
+- imagens
+- ícones locais, quando houver
+
+### `src/components`
+
+Componentes compartilhados entre features.
+
+### `src/components/ui`
+
+Componentes base de interface, reaproveitáveis e desacoplados da regra de negócio.
+
+Exemplos:
+- `Button`
+- `Input`
+- `Card`
+- `Label`
+- `Alert`
+
+Responsabilidade:
+- oferecer blocos visuais padronizados
+- servir de base para as features
+
+### `src/features`
+
+Agrupa o código por domínio funcional da aplicação.
+
+Essa é a principal organização do projeto.
+
+### `src/features/app`
+
+Contém estruturas da área autenticada que não pertencem a uma única feature de negócio.
+
+- `layouts/`: layout da aplicação logada, como `AppShell`
+
+Responsabilidade:
+- compor a casca da área autenticada
+- manter `header`, `sidebar` e `Outlet`
+
+### `src/features/auth`
+
+Concentra toda a responsabilidade de autenticação.
+
+Subpastas:
+
+- `components/`: guards e componentes auxiliares de autenticação
+- `contexts/`: contexto React da autenticação
+- `hooks/`: hook `useAuth`
+- `pages/`: telas de login e cadastro
+- `providers/`: `AuthProvider`
+
+Responsabilidade:
+- login e logout
+- sessão do usuário
+- proteção de rotas
+- páginas públicas relacionadas ao acesso
+
+### `src/features/dashboard`
+
+Contém páginas da área principal do sistema.
+
+Hoje:
+- página base inicial do dashboard
+
+Futuro esperado:
+- filtros
+- indicadores
+- comparativos
+- visões analíticas
+
+### `src/features/profile`
+
+Contém telas e componentes relacionados ao perfil do usuário autenticado.
+
+Hoje:
+- página de perfil com dados do usuário mockado
+
+### `src/lib`
+
+Utilitários compartilhados de baixo acoplamento.
+
+Hoje:
+- helpers como `cn` para composição de classes CSS
+
+### `src/services`
+
+Camada de acesso a dados e integração com backend ou mocks.
+
+### `src/services/auth`
+
+Serviços de autenticação.
+
+Hoje:
+
+- `authService.ts`: login mockado
+- `authSession.ts`: persistência e leitura da sessão no `localStorage`
+
+Responsabilidade:
+- centralizar integração de auth
+- facilitar troca futura do mock por API real
+
+### `src/types`
+
+Tipos TypeScript reutilizáveis entre múltiplas áreas.
+
+Hoje:
+- tipos de autenticação, payload e usuário
+
+## Fluxo atual de autenticação
+
+1. O usuário acessa `/login`
+2. O formulário valida e envia credenciais para o serviço mockado
+3. O `AuthProvider` recebe o usuário autenticado
+4. A sessão é persistida em `localStorage`
+5. O usuário é redirecionado para `/app`
+6. Ao recarregar a página, a sessão é restaurada automaticamente
+7. No logout, a sessão local é removida e o usuário volta para `/login`
+
+## Rotas
+
+### Públicas
+
+- `/login`
+- `/register`
+
+### Protegidas
+
+- `/app`
+- `/app/profile`
+
+## Direção arquitetural para a futura API
+
+O código atual já foi organizado para facilitar a migração do mock para backend real.
+
+O impacto esperado dessa futura mudança deve se concentrar principalmente em:
+
+- `src/services/auth/authService.ts`
+- `src/services/auth/authSession.ts`
+- `src/features/auth/providers/AuthProvider.tsx`
+
+Isso evita mexer de forma relevante em:
+
+- páginas
+- layout autenticado
+- estrutura de rotas
+- componentes base de UI
+
+## Próximos passos sugeridos
+
+- integrar login e cadastro com API real
+- criar uma camada HTTP centralizada para autenticação e dados analíticos
+- adicionar guards com estados de carregamento e expiração de sessão
+- implementar dashboard real com filtros e indicadores
+- expandir a feature de perfil com edição e preferências do usuário
+
+## Observações
+
+- o backend ainda não está integrado
+- o cadastro atual é visual e preparatório
+- a autenticação atual é mockada e destinada à evolução posterior

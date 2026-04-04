@@ -1,16 +1,7 @@
-import { useState } from 'react'
-
-import { LoginPage } from '@/features/auth/pages/LoginPage'
-import { RegisterPage } from '@/features/auth/pages/RegisterPage'
+import { AppRoutes } from '@/app/routes/AppRoutes'
 
 function App() {
-  const [view, setView] = useState<'login' | 'register'>('login')
-
-  if (view === 'register') {
-    return <RegisterPage onBackToLogin={() => setView('login')} />
-  }
-
-  return <LoginPage onCreateAccount={() => setView('register')} />
+  return <AppRoutes />
 }
 
 export default App

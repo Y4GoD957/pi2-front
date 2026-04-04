@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 
 import logo from '@/assets/logo.png'
+import { appPaths } from '@/app/routes/paths'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Link } from 'react-router-dom'
 
 interface RegisterFormState {
   name: string
@@ -25,10 +27,6 @@ interface RegisterFieldErrors {
   email?: string
   password?: string
   confirmPassword?: string
-}
-
-interface RegisterPageProps {
-  onBackToLogin: () => void
 }
 
 const INITIAL_STATE: RegisterFormState = {
@@ -67,7 +65,7 @@ function validate(values: RegisterFormState): RegisterFieldErrors {
   return errors
 }
 
-export function RegisterPage({ onBackToLogin }: RegisterPageProps) {
+export function RegisterPage() {
   const [form, setForm] = useState<RegisterFormState>(INITIAL_STATE)
   const [fieldErrors, setFieldErrors] = useState<RegisterFieldErrors>({})
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
@@ -263,13 +261,12 @@ export function RegisterPage({ onBackToLogin }: RegisterPageProps) {
                   {isSubmitting ? 'Preparando conta...' : 'Criar conta'}
                 </Button>
 
-                <button
-                  type="button"
-                  onClick={onBackToLogin}
-                  className="w-full text-sm font-medium text-slate-700 transition hover:text-slate-950"
+                <Link
+                  to={appPaths.login}
+                  className="block w-full text-center text-sm font-medium text-slate-700 transition hover:text-slate-950"
                 >
                   Voltar para login
-                </button>
+                </Link>
               </div>
             </form>
           </CardContent>

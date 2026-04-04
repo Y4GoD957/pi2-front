@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 
 import logo from '@/assets/logo.png'
+import { appPaths } from '@/app/routes/paths'
 import { AlertError } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,9 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { loginWithMock } from '@/services/auth/authService'
+import { Link } from 'react-router-dom'
 
 interface FormState {
   email: string
@@ -28,10 +31,6 @@ interface FieldErrors {
 const INITIAL_STATE: FormState = {
   email: '',
   password: '',
-}
-
-interface LoginPageProps {
-  onCreateAccount: () => void
 }
 
 function validate(values: FormState): FieldErrors {
@@ -53,11 +52,12 @@ function validate(values: FormState): FieldErrors {
   return errors
 }
 
-export function LoginPage({ onCreateAccount }: LoginPageProps) {
+export function LoginPage() {
   const [form, setForm] = useState<FormState>(INITIAL_STATE)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [authError, setAuthError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { login } = useAuth()
 
   const credentialsHint = useMemo(
     () => 'Mock: admin@educenso.dev / 123456',
@@ -89,7 +89,7 @@ export function LoginPage({ onCreateAccount }: LoginPageProps) {
         password: form.password,
       })
 
-      console.log('Auth success:', response)
+      login(response.user)
     } catch (error) {
       const message =
         error instanceof Error
@@ -184,13 +184,12 @@ export function LoginPage({ onCreateAccount }: LoginPageProps) {
                 {isSubmitting ? 'Entrando...' : 'Entrar'}
               </Button>
 
-              <button
-                type="button"
-                onClick={onCreateAccount}
-                className="w-full text-sm font-medium text-cyan-800 transition hover:text-cyan-950"
+              <Link
+                to={appPaths.register}
+                className="block w-full text-center text-sm font-medium text-cyan-800 transition hover:text-cyan-950"
               >
                 Criar conta
-              </button>
+              </Link>
             </form>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">

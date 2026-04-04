@@ -1,0 +1,11 @@
+model = "gpt-5.4"
+
+# Ajuste conforme seu ambiente/Codex
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[tools]
+web_search = false
+
+[project]
+# opcional, dependendo do ambiente

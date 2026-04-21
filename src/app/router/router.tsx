@@ -12,6 +12,7 @@ import { appPaths } from '@/app/routes/paths'
 import type { AuthContextValue } from '@/features/auth/contexts/AuthContext'
 import { createAuthRoutes } from '@/features/auth/routes/authRoutes'
 import { createDashboardRoutes } from '@/features/dashboard/routes/dashboardRoutes'
+import { createEducensoRoutes } from '@/features/educenso/routes/educensoRoutes'
 import { createProfileRoutes } from '@/features/profile/routes/profileRoutes'
 import { createUserRoutes } from '@/features/user/routes/userRoutes'
 
@@ -63,6 +64,7 @@ const routeTree = rootRoute.addChildren([
   publicRoute.addChildren(createAuthRoutes(publicRoute)),
   appRoute.addChildren([
     ...createDashboardRoutes(appRoute),
+    ...createEducensoRoutes(appRoute),
     ...createProfileRoutes(appRoute),
     ...createUserRoutes(appRoute),
   ]),

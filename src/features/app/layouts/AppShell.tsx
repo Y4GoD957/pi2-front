@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  ScrollText,
   UserCircle2,
   X,
 } from 'lucide-react'
@@ -29,6 +30,11 @@ const navigationItems = [
     label: 'Usuario',
     to: appPaths.user,
     icon: UserCircle2,
+  },
+  {
+    label: 'Relatorios',
+    to: appPaths.reports,
+    icon: ScrollText,
   },
 ]
 

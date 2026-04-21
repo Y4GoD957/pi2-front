@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 
 import logo from '@/assets/logo.png'
 import { appPaths } from '@/app/routes/paths'
+import { AlertError } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,11 +14,17 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { extractDigits, formatCpf, formatPhone } from '@/lib/utils'
+import { register } from '@/services/auth/authService'
 import { Link } from 'react-router-dom'
 
 interface RegisterFormState {
   name: string
   email: string
+  cpf: string
+  birthDate: string
+  phone: string
+  address: string
   password: string
   confirmPassword: string
 }
@@ -25,6 +32,10 @@ interface RegisterFormState {
 interface RegisterFieldErrors {
   name?: string
   email?: string
+  cpf?: string
+  birthDate?: string
+  phone?: string
+  address?: string
   password?: string
   confirmPassword?: string
 }
@@ -32,6 +43,10 @@ interface RegisterFieldErrors {
 const INITIAL_STATE: RegisterFormState = {
   name: '',
   email: '',
+  cpf: '',
+  birthDate: '',
+  phone: '',
+  address: '',
   password: '',
   confirmPassword: '',
 }
@@ -48,6 +63,26 @@ function validate(values: RegisterFormState): RegisterFieldErrors {
     errors.email = 'Informe seu e-mail.'
   } else if (!emailRegex.test(values.email)) {
     errors.email = 'Digite um e-mail valido.'
+  }
+
+  if (!values.cpf.trim()) {
+    errors.cpf = 'Informe seu CPF.'
+  } else if (extractDigits(values.cpf).length !== 11) {
+    errors.cpf = 'Digite um CPF com 11 numeros.'
+  }
+
+  if (!values.birthDate) {
+    errors.birthDate = 'Informe sua data de nascimento.'
+  }
+
+  if (!values.phone.trim()) {
+    errors.phone = 'Informe seu telefone.'
+  } else if (extractDigits(values.phone).length < 10) {
+    errors.phone = 'Digite um telefone valido com DDD.'
+  }
+
+  if (!values.address.trim()) {
+    errors.address = 'Informe seu endereco.'
   }
 
   if (!values.password) {
@@ -68,6 +103,7 @@ function validate(values: RegisterFormState): RegisterFieldErrors {
 export function RegisterPage() {
   const [form, setForm] = useState<RegisterFormState>(INITIAL_STATE)
   const [fieldErrors, setFieldErrors] = useState<RegisterFieldErrors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -81,8 +117,16 @@ export function RegisterPage() {
   )
 
   const handleChange = (field: keyof RegisterFormState, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    const nextValue =
+      field === 'cpf'
+        ? formatCpf(value)
+        : field === 'phone'
+          ? formatPhone(value)
+          : value
+
+    setForm((prev) => ({ ...prev, [field]: nextValue }))
     setFieldErrors((prev) => ({ ...prev, [field]: undefined }))
+    setSubmitError(null)
     setSubmitMessage(null)
   }
 
@@ -97,14 +141,31 @@ export function RegisterPage() {
     }
 
     setIsSubmitting(true)
+    setSubmitError(null)
     setSubmitMessage(null)
 
-    await new Promise((resolve) => window.setTimeout(resolve, 900))
+    try {
+      const response = await register({
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        cpf: extractDigits(form.cpf),
+        birthDate: form.birthDate,
+        phone: extractDigits(form.phone),
+        address: form.address.trim(),
+        profileId: 2,
+        password: form.password,
+      })
 
-    setSubmitMessage(
-      `Cadastro pronto para integrar com API: ${form.email.trim().toLowerCase()}`,
-    )
-    setIsSubmitting(false)
+      setSubmitMessage(response.message)
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Nao foi possivel concluir o cadastro. Tente novamente.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -139,8 +200,8 @@ export function RegisterPage() {
 
             <p className="max-w-2xl text-sm leading-7 text-slate-200 sm:text-base">
               Uma entrada mais editorial para o fluxo de cadastro, com foco em
-              descoberta, contexto e continuidade para a integracao futura com
-              autenticacao real.
+              descoberta, contexto e continuidade da jornada dentro da
+              plataforma.
             </p>
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -210,6 +271,85 @@ export function RegisterPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
+                  <Label htmlFor="cpf">CPF</Label>
+                  <Input
+                    id="cpf"
+                    autoComplete="off"
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    value={form.cpf}
+                    onChange={(event) => handleChange('cpf', event.target.value)}
+                    aria-invalid={Boolean(fieldErrors.cpf)}
+                  />
+                  {fieldErrors.cpf ? (
+                    <p className="text-xs font-medium text-destructive">
+                      {fieldErrors.cpf}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="birthDate">Data de nascimento</Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={form.birthDate}
+                    onChange={(event) =>
+                      handleChange('birthDate', event.target.value)
+                    }
+                    aria-invalid={Boolean(fieldErrors.birthDate)}
+                  />
+                  {fieldErrors.birthDate ? (
+                    <p className="text-xs font-medium text-destructive">
+                      {fieldErrors.birthDate}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
+                    id="phone"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    placeholder="(00) 00000-0000"
+                    value={form.phone}
+                    onChange={(event) =>
+                      handleChange('phone', event.target.value)
+                    }
+                    aria-invalid={Boolean(fieldErrors.phone)}
+                  />
+                  {fieldErrors.phone ? (
+                    <p className="text-xs font-medium text-destructive">
+                      {fieldErrors.phone}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Endereco</Label>
+                  <Input
+                    id="address"
+                    autoComplete="street-address"
+                    placeholder="Rua, numero, bairro"
+                    value={form.address}
+                    onChange={(event) =>
+                      handleChange('address', event.target.value)
+                    }
+                    aria-invalid={Boolean(fieldErrors.address)}
+                  />
+                  {fieldErrors.address ? (
+                    <p className="text-xs font-medium text-destructive">
+                      {fieldErrors.address}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
                   <Label htmlFor="password">Senha</Label>
                   <Input
                     id="password"
@@ -255,6 +395,8 @@ export function RegisterPage() {
                   {submitMessage}
                 </div>
               ) : null}
+
+              {submitError ? <AlertError message={submitError} /> : null}
 
               <div className="space-y-3 pt-2">
                 <Button type="submit" className="w-full" disabled={isSubmitting}>

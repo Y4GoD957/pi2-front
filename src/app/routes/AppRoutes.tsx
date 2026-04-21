@@ -10,7 +10,11 @@ import { PublicOnlyRoute } from '@/features/auth/components/PublicOnlyRoute'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 function AppRedirect() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isAuthReady } = useAuth()
+
+  if (!isAuthReady) {
+    return null
+  }
 
   return (
     <Navigate

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatCpf, formatDateBr, formatPhone } from '@/lib/utils'
 import type { AuthUser } from '@/types/auth'
 
 interface ProfilePageProps {
@@ -42,13 +43,44 @@ export function ProfilePage({ user }: ProfilePageProps) {
               {user.email}
             </p>
           </div>
-          <div className="rounded-2xl bg-slate-50 p-4 sm:col-span-2">
+          <div className="rounded-2xl bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Status
+              Perfil
             </p>
             <p className="mt-2 text-base font-medium text-slate-900">
-              Conta autenticada por mock. Aqui entram configuracoes e
-              preferencias do usuario.
+              {user.profileDescription ?? 'Nao informado'}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              CPF
+            </p>
+            <p className="mt-2 text-base font-medium text-slate-900">
+              {user.cpf ? formatCpf(user.cpf) : 'Nao informado'}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Data de nascimento
+            </p>
+            <p className="mt-2 text-base font-medium text-slate-900">
+              {user.birthDate ? formatDateBr(user.birthDate) : 'Nao informado'}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Telefone
+            </p>
+            <p className="mt-2 text-base font-medium text-slate-900">
+              {user.phone ? formatPhone(user.phone) : 'Nao informado'}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-slate-50 p-4 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Endereco
+            </p>
+            <p className="mt-2 text-base font-medium text-slate-900">
+              {user.address ?? 'Nao informado'}
             </p>
           </div>
         </CardContent>

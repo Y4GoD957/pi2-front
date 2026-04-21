@@ -4,8 +4,9 @@ import type { AuthUser } from '@/types/auth'
 
 export interface AuthContextValue {
   isAuthenticated: boolean
+  isAuthReady: boolean
   login: (user: AuthUser) => void
-  logout: () => void
+  logout: () => Promise<void>
   user: AuthUser | null
 }
 

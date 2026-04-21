@@ -3,7 +3,11 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Navigate, Outlet } from 'react-router-dom'
 
 export function PublicOnlyRoute() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isAuthReady } = useAuth()
+
+  if (!isAuthReady) {
+    return null
+  }
 
   if (isAuthenticated) {
     return <Navigate to={appPaths.app} replace />

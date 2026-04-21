@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 
 import logo from '@/assets/logo.png'
@@ -15,7 +15,7 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { loginWithMock } from '@/services/auth/authService'
+import { login as loginRequest } from '@/services/auth/authService'
 import { Link } from 'react-router-dom'
 
 interface FormState {
@@ -59,11 +59,6 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
 
-  const credentialsHint = useMemo(
-    () => 'Mock: admin@educenso.dev / 123456',
-    [],
-  )
-
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     setFieldErrors((prev) => ({ ...prev, [field]: undefined }))
@@ -84,7 +79,7 @@ export function LoginPage() {
     setAuthError(null)
 
     try {
-      const response = await loginWithMock({
+      const response = await loginRequest({
         email: form.email.trim().toLowerCase(),
         password: form.password,
       })
@@ -191,10 +186,6 @@ export function LoginPage() {
                 Criar conta
               </Link>
             </form>
-
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              {credentialsHint}
-            </p>
           </CardContent>
         </Card>
       </div>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -25,4 +25,13 @@ function AlertError({ message }: { message: string }) {
   )
 }
 
-export { Alert, AlertError }
+function AlertSuccess({ message }: { message: string }) {
+  return (
+    <Alert className="flex items-start gap-2 border-emerald-300 bg-emerald-50 text-emerald-700">
+      <CheckCircle2 className="mt-0.5 size-4" aria-hidden="true" />
+      <span>{message}</span>
+    </Alert>
+  )
+}
+
+export { Alert, AlertError, AlertSuccess }

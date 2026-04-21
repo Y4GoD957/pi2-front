@@ -10,8 +10,8 @@ const buttonVariants = cva(
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         outline:
-          'border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground',
-        ghost: 'text-foreground hover:bg-accent hover:text-accent-foreground',
+          'border border-input bg-background text-foreground hover:border-primary/30 hover:bg-primary/10 hover:text-primary',
+        ghost: 'text-foreground hover:bg-primary/10 hover:text-primary',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
       },
       size: {
@@ -42,4 +42,4 @@ function Button({
   )
 }
 
-export { Button }
+export { Button, buttonVariants }

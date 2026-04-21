@@ -56,6 +56,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
         setUser(nextUser)
       },
+      updateUser: (nextUser) => {
+        if (!isSupabaseConfigured) {
+          persistAuthSession(nextUser)
+        }
+
+        setUser(nextUser)
+      },
       logout: async () => {
         await logoutAuth()
         setUser(null)

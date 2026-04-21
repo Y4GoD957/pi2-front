@@ -13,6 +13,7 @@ import type { AuthContextValue } from '@/features/auth/contexts/AuthContext'
 import { createAuthRoutes } from '@/features/auth/routes/authRoutes'
 import { createDashboardRoutes } from '@/features/dashboard/routes/dashboardRoutes'
 import { createProfileRoutes } from '@/features/profile/routes/profileRoutes'
+import { createUserRoutes } from '@/features/user/routes/userRoutes'
 
 interface RouterContext {
   auth: Pick<AuthContextValue, 'isAuthenticated'>
@@ -63,6 +64,7 @@ const routeTree = rootRoute.addChildren([
   appRoute.addChildren([
     ...createDashboardRoutes(appRoute),
     ...createProfileRoutes(appRoute),
+    ...createUserRoutes(appRoute),
   ]),
 ])
 

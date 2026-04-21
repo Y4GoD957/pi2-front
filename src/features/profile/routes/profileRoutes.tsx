@@ -1,6 +1,6 @@
 import {
   createRoute,
-  lazyRouteComponent,
+  redirect,
 } from '@tanstack/react-router'
 
 import { appPaths } from '@/app/routes/paths'
@@ -10,10 +10,9 @@ export function createProfileRoutes(parentRoute: AnyRoute) {
   const profileRoute = createRoute({
     getParentRoute: () => parentRoute,
     path: appPaths.profile.replace(`${appPaths.app}/`, ''),
-    component: lazyRouteComponent(
-      () => import('@/features/profile/pages/ProfilePageRoute'),
-      'ProfilePageRoute',
-    ),
+    beforeLoad: () => {
+      throw redirect({ to: appPaths.user })
+    },
   })
 
   return [profileRoute] as const

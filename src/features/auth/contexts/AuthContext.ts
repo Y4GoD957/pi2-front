@@ -7,6 +7,7 @@ export interface AuthContextValue {
   isAuthReady: boolean
   login: (user: AuthUser) => void
   logout: () => Promise<void>
+  updateUser: (user: AuthUser) => void
   user: AuthUser | null
 }
 

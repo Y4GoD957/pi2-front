@@ -21,11 +21,13 @@ const navigationItems = [
     label: 'Visao geral',
     to: appPaths.app,
     icon: LayoutDashboard,
-    end: true,
+    activeOptions: {
+      exact: true,
+    },
   },
   {
-    label: 'Perfil',
-    to: appPaths.profile,
+    label: 'Usuario',
+    to: appPaths.user,
     icon: UserCircle2,
   },
 ]
@@ -90,7 +92,7 @@ export function AppShell() {
 
           <div className="flex items-center gap-2">
             <Link
-              to={appPaths.profile}
+              to={appPaths.user}
               className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
               activeProps={{
                 className:
@@ -102,7 +104,7 @@ export function AppShell() {
               }}
             >
               <UserCircle2 className="size-4" />
-              <span className="hidden sm:inline">Perfil</span>
+              <span className="hidden sm:inline">Usuario</span>
             </Link>
             <Button
               type="button"
@@ -151,6 +153,7 @@ export function AppShell() {
                     <Link
                       key={item.to}
                       to={item.to}
+                      activeOptions={item.activeOptions}
                       onClick={() => setIsMobileSidebarOpen(false)}
                       className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition"
                       activeProps={{
@@ -201,6 +204,7 @@ export function AppShell() {
                   <Link
                     key={item.to}
                     to={item.to}
+                    activeOptions={item.activeOptions}
                     title={item.label}
                     className="group flex items-center gap-3 overflow-hidden rounded-2xl px-4 py-3 text-sm transition-all duration-300 ease-out"
                     activeProps={{

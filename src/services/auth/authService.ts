@@ -6,7 +6,10 @@ import type {
   RegisterResponse,
 } from '@/types/auth'
 import { clearAuthSession, readAuthSession } from '@/services/auth/authSession'
-import { isSupabaseConfigured, supabase } from '@/services/supabase/client'
+import {
+  getSupabaseClient,
+  isSupabaseConfigured,
+} from '@/services/supabase/client'
 
 const MOCK_CREDENTIALS = {
   email: 'admin@educenso.dev',
@@ -70,6 +73,8 @@ function mapUsuarioRow(row: UsuarioRow): AuthUser {
 async function fetchUsuarioByAuthUserId(
   authUserId: string,
 ): Promise<AuthUser> {
+  const supabase = await getSupabaseClient()
+
   if (!supabase) {
     throw new Error('Servico de autenticacao indisponivel no momento.')
   }
@@ -114,7 +119,13 @@ async function loginWithMock(payload: LoginPayload): Promise<LoginResponse> {
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
+    return loginWithMock(payload)
+  }
+
+  const supabase = await getSupabaseClient()
+
+  if (!supabase) {
     return loginWithMock(payload)
   }
 
@@ -140,7 +151,17 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 export async function register(
   payload: RegisterPayload,
 ): Promise<RegisterResponse> {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
+    await new Promise((resolve) => setTimeout(resolve, 900))
+
+    return {
+      message: `Cadastro recebido para ${payload.email}. Voce podera concluir o acesso assim que a liberacao estiver disponivel.`,
+    }
+  }
+
+  const supabase = await getSupabaseClient()
+
+  if (!supabase) {
     await new Promise((resolve) => setTimeout(resolve, 900))
 
     return {
@@ -174,7 +195,13 @@ export async function register(
 }
 
 export async function getCurrentAuthUser(): Promise<AuthUser | null> {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
+    return readAuthSession()
+  }
+
+  const supabase = await getSupabaseClient()
+
+  if (!supabase) {
     return readAuthSession()
   }
 
@@ -188,32 +215,50 @@ export async function getCurrentAuthUser(): Promise<AuthUser | null> {
 }
 
 export function onAuthStateChange(callback: (user: AuthUser | null) => void) {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
     return () => undefined
   }
 
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    if (!session?.user) {
-      callback(null)
+  let unsubscribe = () => undefined
+
+  void getSupabaseClient().then((supabase) => {
+    if (!supabase) {
       return
     }
 
-    void fetchUsuarioByAuthUserId(session.user.id)
-      .then((user) => callback(user))
-      .catch(() => callback(null))
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        callback(null)
+        return
+      }
+
+      void fetchUsuarioByAuthUserId(session.user.id)
+        .then((user) => callback(user))
+        .catch(() => callback(null))
+    })
+
+    unsubscribe = () => {
+      subscription.unsubscribe()
+    }
   })
 
   return () => {
-    subscription.unsubscribe()
+    unsubscribe()
   }
 }
 
 export async function logout() {
   clearAuthSession()
 
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
+    return
+  }
+
+  const supabase = await getSupabaseClient()
+
+  if (!supabase) {
     return
   }
 

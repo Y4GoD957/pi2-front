@@ -1,3 +1,4 @@
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 
@@ -16,7 +17,6 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { login as loginRequest } from '@/services/auth/authService'
-import { Link } from 'react-router-dom'
 
 interface FormState {
   email: string
@@ -58,6 +58,7 @@ export function LoginPage() {
   const [authError, setAuthError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -85,6 +86,7 @@ export function LoginPage() {
       })
 
       login(response.user)
+      await navigate({ to: appPaths.app })
     } catch (error) {
       const message =
         error instanceof Error

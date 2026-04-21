@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim()
 const supabasePublishableKey =
@@ -8,12 +8,25 @@ export const isSupabaseConfigured = Boolean(
   supabaseUrl && supabasePublishableKey,
 )
 
-export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl!, supabasePublishableKey!, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-    })
-  : null
+let supabaseClientPromise: Promise<SupabaseClient | null> | null = null
+
+export async function getSupabaseClient() {
+  if (!isSupabaseConfigured) {
+    return null
+  }
+
+  if (!supabaseClientPromise) {
+    supabaseClientPromise = import('@supabase/supabase-js').then(
+      ({ createClient }) =>
+        createClient(supabaseUrl!, supabasePublishableKey!, {
+          auth: {
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: true,
+          },
+        }),
+    )
+  }
+
+  return supabaseClientPromise
+}

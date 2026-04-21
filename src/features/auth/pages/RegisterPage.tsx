@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 
@@ -16,7 +17,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { extractDigits, formatCpf, formatPhone } from '@/lib/utils'
 import { register } from '@/services/auth/authService'
-import { Link } from 'react-router-dom'
 
 interface RegisterFormState {
   name: string

@@ -1,3 +1,4 @@
+import { Link, Outlet, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import logo from '@/assets/logo.png'
@@ -14,7 +15,6 @@ import {
   UserCircle2,
   X,
 } from 'lucide-react'
-import { NavLink, Outlet } from 'react-router-dom'
 
 const navigationItems = [
   {
@@ -34,6 +34,7 @@ export function AppShell() {
   const { logout, user } = useAuth()
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const navigate = useNavigate()
 
   if (!user) {
     return null
@@ -88,24 +89,29 @@ export function AppShell() {
           </div>
 
           <div className="flex items-center gap-2">
-            <NavLink
+            <Link
               to={appPaths.profile}
-              className={({ isActive }) =>
-                cn(
-                  'inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors',
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
+              activeProps={{
+                className:
+                  'border-cyan-200 bg-cyan-50 text-cyan-900',
+              }}
+              inactiveProps={{
+                className:
                   'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950',
-                  isActive && 'border-cyan-200 bg-cyan-50 text-cyan-900',
-                )
-              }
+              }}
             >
               <UserCircle2 className="size-4" />
               <span className="hidden sm:inline">Perfil</span>
-            </NavLink>
+            </Link>
             <Button
               type="button"
               variant="outline"
               className="rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950"
-              onClick={logout}
+              onClick={async () => {
+                await logout()
+                await navigate({ to: appPaths.login })
+              }}
             >
               <LogOut className="size-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -142,22 +148,22 @@ export function AppShell() {
                   const Icon = item.icon
 
                   return (
-                    <NavLink
+                    <Link
                       key={item.to}
                       to={item.to}
-                      end={item.end}
                       onClick={() => setIsMobileSidebarOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition ${
-                          isActive
-                            ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-cyan-300/30'
-                            : 'text-slate-200 hover:bg-white/5'
-                        }`
-                      }
+                      className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition"
+                      activeProps={{
+                        className:
+                          'bg-cyan-400/15 text-cyan-200 ring-1 ring-cyan-300/30',
+                      }}
+                      inactiveProps={{
+                        className: 'text-slate-200 hover:bg-white/5',
+                      }}
                     >
                       <Icon className="size-4" />
                       <span>{item.label}</span>
-                    </NavLink>
+                    </Link>
                   )
                 })}
               </nav>
@@ -192,25 +198,24 @@ export function AppShell() {
                 const Icon = item.icon
 
                 return (
-                  <NavLink
+                  <Link
                     key={item.to}
                     to={item.to}
-                    end={item.end}
                     title={item.label}
-                    className={({ isActive }) =>
-                      cn(
-                        'group flex items-center gap-3 overflow-hidden rounded-2xl px-4 py-3 text-sm transition-all duration-300 ease-out',
-                        isActive
-                          ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-cyan-300/30'
-                          : 'text-slate-200 hover:bg-white/5',
-                      )
-                    }
+                    className="group flex items-center gap-3 overflow-hidden rounded-2xl px-4 py-3 text-sm transition-all duration-300 ease-out"
+                    activeProps={{
+                      className:
+                        'bg-cyan-400/15 text-cyan-200 ring-1 ring-cyan-300/30',
+                    }}
+                    inactiveProps={{
+                      className: 'text-slate-200 hover:bg-white/5',
+                    }}
                   >
                     <Icon className="size-4 shrink-0" />
                     <span className="whitespace-nowrap transition-all duration-200 ease-out">
                       {item.label}
                     </span>
-                  </NavLink>
+                  </Link>
                 )
               })}
             </nav>

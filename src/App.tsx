@@ -1,7 +1,14 @@
-import { AppRoutes } from '@/app/routes/AppRoutes'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { AppRouter } from '@/app/router/router'
 
 function App() {
-  return <AppRoutes />
+  const { isAuthReady, isAuthenticated } = useAuth()
+
+  if (!isAuthReady) {
+    return null
+  }
+
+  return <AppRouter auth={{ isAuthenticated }} />
 }
 
 export default App

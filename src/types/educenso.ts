@@ -169,7 +169,7 @@ export interface DfHeatMapArea {
   reportCount: number
   year?: number
   svgPath?: string
-  source: 'supabase' | 'ibge-fastapi'
+  source: 'backend-fallback' | 'ibge-fastapi'
 }
 
 export interface DfHeatMapData {

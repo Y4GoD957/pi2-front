@@ -87,7 +87,7 @@ export function buildDfHeatMapFallback(records: AnalysisRecord[]): DfHeatMapData
       normalizedValue: clamp01(group.scoreTotal / group.reportCount / 100),
       reportCount: group.reportCount,
       year: group.latestYear,
-      source: 'supabase',
+      source: 'backend-fallback',
     }))
     .sort((left, right) => right.metricValue - left.metricValue)
 
@@ -96,7 +96,7 @@ export function buildDfHeatMapFallback(records: AnalysisRecord[]): DfHeatMapData
     subtitle:
       'Blocos setoriais do Distrito Federal com intensidade derivada dos indicadores reais disponiveis no recorte atual.',
     areas,
-    sourceLabel: 'Supabase atual do projeto',
+    sourceLabel: 'API Python do projeto',
     geometryStatus: 'fallback',
     notes: [
       'Sem geometria intramunicipal consolidada no backend, o mapa usa um bloco tematico por setor/localidade do DF.',

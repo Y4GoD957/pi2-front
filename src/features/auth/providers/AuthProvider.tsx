@@ -5,12 +5,13 @@ import {
   AuthContext,
   type AuthContextValue,
 } from '@/features/auth/contexts/AuthContext'
-import { persistAuthSession } from '@/services/auth/authSession'
+import {
+  persistAuthSession,
+  readAuthSessionData,
+} from '@/services/auth/authSession'
 import {
   getCurrentAuthUser,
-  isSupabaseConfigured,
   logout as logoutAuth,
-  onAuthStateChange,
 } from '@/services/auth/authService'
 import type { AuthUser } from '@/types/auth'
 
@@ -30,18 +31,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setIsAuthReady(true)
     })
 
-    const unsubscribe = onAuthStateChange((nextUser) => {
-      if (!isMounted) {
-        return
-      }
-
-      setUser(nextUser)
-      setIsAuthReady(true)
-    })
-
     return () => {
       isMounted = false
-      unsubscribe()
     }
   }, [])
 
@@ -50,15 +41,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isAuthReady,
       isAuthenticated: user !== null,
       login: (nextUser) => {
-        if (!isSupabaseConfigured) {
-          persistAuthSession(nextUser)
+        const sessionData = readAuthSessionData()
+        if (sessionData?.token) {
+          persistAuthSession({
+            token: sessionData.token,
+            user: nextUser,
+          })
         }
 
         setUser(nextUser)
       },
       updateUser: (nextUser) => {
-        if (!isSupabaseConfigured) {
-          persistAuthSession(nextUser)
+        const sessionData = readAuthSessionData()
+        if (sessionData?.token) {
+          persistAuthSession({
+            token: sessionData.token,
+            user: nextUser,
+          })
         }
 
         setUser(nextUser)

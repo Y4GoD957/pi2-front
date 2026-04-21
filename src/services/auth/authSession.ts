@@ -2,11 +2,12 @@ import type { AuthUser } from '@/types/auth'
 
 const AUTH_STORAGE_KEY = 'educenso.auth.session'
 
-interface StoredAuthSession {
+export interface StoredAuthSession {
+  token: string
   user: AuthUser
 }
 
-export function readAuthSession(): AuthUser | null {
+export function readAuthSessionData(): StoredAuthSession | null {
   if (typeof window === 'undefined') {
     return null
   }
@@ -23,6 +24,7 @@ export function readAuthSession(): AuthUser | null {
     if (
       !session ||
       typeof session !== 'object' ||
+      typeof session.token !== 'string' ||
       !session.user ||
       typeof session.user.id !== 'string' ||
       typeof session.user.email !== 'string' ||
@@ -32,19 +34,22 @@ export function readAuthSession(): AuthUser | null {
       return null
     }
 
-    return session.user
+    return session
   } catch {
     window.localStorage.removeItem(AUTH_STORAGE_KEY)
     return null
   }
 }
 
-export function persistAuthSession(user: AuthUser) {
+export function readAuthSession(): AuthUser | null {
+  return readAuthSessionData()?.user ?? null
+}
+
+export function persistAuthSession(session: StoredAuthSession) {
   if (typeof window === 'undefined') {
     return
   }
 
-  const session: StoredAuthSession = { user }
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session))
 }
 

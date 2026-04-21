@@ -496,8 +496,8 @@ export function UserAccountPage({
               </p>
               <p className="mt-2 leading-6">
                 As alteracoes desta tela agora consultam e atualizam os dados do
-                proprio usuario no Supabase, respeitando as policies ja
-                configuradas para a conta autenticada.
+                proprio usuario pela API Python, centralizando a regra de negocio
+                no backend.
               </p>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">

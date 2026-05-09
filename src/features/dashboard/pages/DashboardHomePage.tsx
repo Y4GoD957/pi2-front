@@ -11,22 +11,36 @@ import { RecommendationList } from '@/features/educenso/components/Recommendatio
 import { useDfAdministrativeRegions } from '@/features/educenso/hooks/useDfAdministrativeRegions'
 import { useEducensoDashboard } from '@/features/educenso/hooks/useEducensoDashboard'
 
+function SectionSkeleton({ rows = 1 }: { rows?: number }) {
+  return (
+    <div className="animate-pulse rounded-[2rem] border border-slate-200 bg-white/80 p-6">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div
+          key={i}
+          className={`h-4 rounded-full bg-slate-200 ${i > 0 ? 'mt-3' : ''}`}
+          style={{ width: `${70 - i * 15}%` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function CardGridSkeleton() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SectionSkeleton key={i} rows={3} />
+      ))}
+    </div>
+  )
+}
+
 export function DashboardHomePage() {
-  const { data, error, filters, isLoading, setFilters } = useEducensoDashboard()
+  const dashboard = useEducensoDashboard()
   const { error: dfRegionsError, regions } = useDfAdministrativeRegions()
 
-  if (isLoading) {
-    return (
-      <Card className="border-white/70 bg-white/85 backdrop-blur-sm">
-        <CardContent className="p-6 text-sm text-slate-600">
-          Carregando painel analitico...
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (error || !data) {
-    return <AlertError message={error ?? 'Dashboard indisponivel.'} />
+  if (dashboard.error && !dashboard.indicators) {
+    return <AlertError message={dashboard.error ?? 'Dashboard indisponivel.'} />
   }
 
   return (
@@ -43,38 +57,83 @@ export function DashboardHomePage() {
           saneamento, com foco exclusivo no DF para leitura clara por
           gestores, pesquisadores e formuladores de politica publica.
         </p>
-        <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          {data.modelNotice}
-        </p>
+
+        {dashboard.modelNotice ? (
+          <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            {dashboard.modelNotice}
+          </p>
+        ) : (
+          <div className="mt-4 animate-pulse rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <div className="h-3 w-3/4 rounded-full bg-amber-200" />
+          </div>
+        )}
+
+        <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+          <p className="font-semibold">Leitura oficial com limitação territorial conhecida</p>
+          <p className="mt-1 leading-6">
+            Nesta etapa, os indicadores oficiais exibidos no painel representam o Distrito Federal no nível de UF. Quando não houver detalhamento por Região Administrativa, a interface informa essa limitação de forma clara.
+          </p>
+        </div>
+
         <p className="mt-3 text-sm text-slate-600">
-          Distritos administrativos identificados via IBGE:
-          {' '}
-          {regions.length}
+          Distritos administrativos identificados via IBGE: {regions.length}
           {dfRegionsError ? ' • referencia IBGE indisponivel no momento' : ''}
         </p>
       </header>
 
-      <AnalysisFilters
-        filters={filters}
-        options={data.filterOptions}
-        onChange={setFilters}
-      />
+      {dashboard.filterOptions ? (
+        <AnalysisFilters
+          filters={dashboard.filters}
+          options={dashboard.filterOptions}
+          onChange={dashboard.setFilters}
+        />
+      ) : (
+        <SectionSkeleton rows={2} />
+      )}
 
-      <IndicatorCards indicators={data.indicators} />
+      {dashboard.indicators ? (
+        <IndicatorCards indicators={dashboard.indicators} />
+      ) : (
+        <CardGridSkeleton />
+      )}
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <MetricLineChart data={data.trend} />
-        <LikertSummary summary={data.likertSummary} />
+        {dashboard.trend ? (
+          <MetricLineChart data={dashboard.trend} />
+        ) : (
+          <SectionSkeleton rows={4} />
+        )}
+        {dashboard.likertSummary ? (
+          <LikertSummary summary={dashboard.likertSummary} />
+        ) : (
+          <SectionSkeleton rows={3} />
+        )}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <MetricBarChart data={data.comparisons} />
-        <RecommendationList recommendations={data.recommendations} />
+        {dashboard.comparisons ? (
+          <MetricBarChart data={dashboard.comparisons} />
+        ) : (
+          <SectionSkeleton rows={3} />
+        )}
+        {dashboard.recommendations ? (
+          <RecommendationList recommendations={dashboard.recommendations} />
+        ) : (
+          <SectionSkeleton rows={3} />
+        )}
       </section>
 
-      <DfHeatMap data={data.heatMap} />
+      {dashboard.heatMap ? (
+        <DfHeatMap data={dashboard.heatMap} />
+      ) : (
+        <SectionSkeleton rows={4} />
+      )}
 
-      <AnalyticalTable rows={data.tableRows} />
+      {dashboard.tableRows ? (
+        <AnalyticalTable rows={dashboard.tableRows} />
+      ) : (
+        <SectionSkeleton rows={3} />
+      )}
 
       <Card className="border-white/70 bg-white/88 backdrop-blur-sm">
         <CardContent className="p-6">
@@ -82,11 +141,13 @@ export function DashboardHomePage() {
             Preparacao para expansao
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600">
-            Estrutura pronta para incorporar: {data.futureIndicators.join(', ')}.
+            Estrutura pronta para incorporar: {dashboard.futureIndicators.join(', ')}.
           </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600">
-            Total de observacoes unicas no recorte atual: {data.totalRecords}.
-          </p>
+          {dashboard.totalRecords !== null ? (
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Total de observacoes unicas no recorte atual: {dashboard.totalRecords}.
+            </p>
+          ) : null}
         </CardContent>
       </Card>
     </>

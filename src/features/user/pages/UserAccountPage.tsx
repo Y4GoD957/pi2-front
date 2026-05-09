@@ -129,7 +129,7 @@ export function UserAccountPage({
   const [errors, setErrors] = useState<AccountFormErrors>({})
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
-  const [lastSyncedUserId, setLastSyncedUserId] = useState(user.id)
+  const [lastSyncedUser, setLastSyncedUser] = useState<AuthUser>(user)
   const [isDirty, setIsDirty] = useState(false)
   const selectedBirthDate = parseIsoDate(form.birthDate)
 
@@ -150,20 +150,18 @@ export function UserAccountPage({
     }
   }, [isDirty, isSaving])
 
-  useEffect(() => {
-    const shouldSync =
-      user.id !== lastSyncedUserId || (!isDirty && !isSaving)
-
-    if (!shouldSync) {
-      return
+  // Sync form when parent passes a new user object (different ID or clean form with fresh data).
+  // Follows React docs "storing information from previous renders" pattern — safe during render.
+  if (user !== lastSyncedUser) {
+    const userIdChanged = user.id !== lastSyncedUser.id
+    if (userIdChanged || (!isDirty && !isSaving)) {
+      setLastSyncedUser(user)
+      setForm(buildInitialState(user))
+      setErrors({})
+      setSubmitError(null)
+      setIsDirty(false)
     }
-
-    setForm(buildInitialState(user))
-    setErrors({})
-    setSubmitError(null)
-    setLastSyncedUserId(user.id)
-    setIsDirty(false)
-  }, [isDirty, isSaving, lastSyncedUserId, user])
+  }
 
   const handleChange = (field: keyof AccountFormState, value: string) => {
     const nextValue =

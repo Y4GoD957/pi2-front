@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import {
   ChevronLeft,
   ChevronRight,
+  Landmark,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -35,6 +36,11 @@ const navigationItems = [
     label: 'Relatorios',
     to: appPaths.reports,
     icon: ScrollText,
+  },
+  {
+    label: 'Politicas Publicas',
+    to: appPaths.publicPolicies,
+    icon: Landmark,
   },
 ]
 
@@ -239,9 +245,7 @@ export function AppShell() {
           </div>
         </aside>
 
-        <section
-          className="space-y-6 py-1"
-        >
+        <section className="space-y-6 py-1">
           <Outlet />
         </section>
       </div>

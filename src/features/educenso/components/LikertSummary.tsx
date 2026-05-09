@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { DashboardLikertSummary } from '@/types/educenso'
 
@@ -43,7 +45,7 @@ function LikertMeter({
   )
 }
 
-export function LikertSummary({ summary }: LikertSummaryProps) {
+export const LikertSummary = memo(function LikertSummary({ summary }: LikertSummaryProps) {
   return (
     <Card className="border-white/70 bg-white/88 backdrop-blur-sm">
       <CardHeader>
@@ -61,4 +63,4 @@ export function LikertSummary({ summary }: LikertSummaryProps) {
       </CardContent>
     </Card>
   )
-}
+})

@@ -1,3 +1,5 @@
+﻿import { memo } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { IndicatorComparisonPoint } from '@/types/educenso'
 
@@ -13,14 +15,13 @@ function percentage(value: number | null) {
   return Math.min(100, Math.max(0, value))
 }
 
-export function MetricBarChart({ data }: MetricBarChartProps) {
+export const MetricBarChart = memo(function MetricBarChart({ data }: MetricBarChartProps) {
   return (
     <Card className="border-white/70 bg-white/88 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-lg">Comparacao territorial</CardTitle>
         <p className="text-sm text-slate-600">
-          Taxa de matricula e acesso a internet nas localidades mais relevantes
-          do recorte filtrado.
+          Comparativo resumido do recorte oficial atualmente disponivel para o Distrito Federal.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -37,13 +38,13 @@ export function MetricBarChart({ data }: MetricBarChartProps) {
               <div className="mt-4 space-y-3">
                 <div>
                   <div className="mb-1 flex items-center justify-between text-xs text-slate-500">
-                    <span>Matricula</span>
-                    <span>{item.taxaMatricula?.toFixed(1) ?? '--'}%</span>
+                    <span>Frequencia</span>
+                    <span>{item.taxaFrequenciaEscolar?.toFixed(1) ?? '--'}%</span>
                   </div>
                   <div className="h-2.5 rounded-full bg-slate-200">
                     <div
                       className="h-2.5 rounded-full bg-cyan-600"
-                      style={{ width: `${percentage(item.taxaMatricula)}%` }}
+                      style={{ width: `${percentage(item.taxaFrequenciaEscolar)}%` }}
                     />
                   </div>
                 </div>
@@ -64,11 +65,11 @@ export function MetricBarChart({ data }: MetricBarChartProps) {
             </div>
           ))
         ) : (
-          <p className="text-sm text-slate-600">
-            Nenhuma comparacao disponivel para os filtros atuais.
-          </p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            Não há comparação adicional disponível além do recorte oficial atual do Distrito Federal.
+          </div>
         )}
       </CardContent>
     </Card>
   )
-}
+})

@@ -1,3 +1,4 @@
+/* @refresh reset */
 import {
   Outlet,
   RouterProvider,
@@ -14,6 +15,7 @@ import { createAuthRoutes } from '@/features/auth/routes/authRoutes'
 import { createDashboardRoutes } from '@/features/dashboard/routes/dashboardRoutes'
 import { createEducensoRoutes } from '@/features/educenso/routes/educensoRoutes'
 import { createProfileRoutes } from '@/features/profile/routes/profileRoutes'
+import { createPublicPolicyRoutes } from '@/features/public-policies/routes/publicPolicyRoutes'
 import { createUserRoutes } from '@/features/user/routes/userRoutes'
 
 interface RouterContext {
@@ -65,11 +67,13 @@ const routeTree = rootRoute.addChildren([
   appRoute.addChildren([
     ...createDashboardRoutes(appRoute),
     ...createEducensoRoutes(appRoute),
+    ...createPublicPolicyRoutes(appRoute),
     ...createProfileRoutes(appRoute),
     ...createUserRoutes(appRoute),
   ]),
 ])
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const router = createRouter({
   routeTree,
   context: {

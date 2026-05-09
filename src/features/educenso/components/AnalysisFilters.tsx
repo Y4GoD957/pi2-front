@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+﻿import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
@@ -19,6 +19,14 @@ interface AnalysisFiltersProps {
 }
 
 const ALL_VALUE = '__all__'
+const INDICATOR_LABELS: Record<string, string> = {
+  adequate_housing_pct: 'Moradia adequada',
+  illiteracy_rate_15_plus: 'Analfabetismo 15+',
+  internet_access_pct: 'Acesso à internet',
+  literacy_rate_15_plus: 'Alfabetização 15+',
+  population_resident: 'População residente',
+  school_attendance_rate: 'Frequência escolar',
+}
 
 export function AnalysisFilters({
   filters,
@@ -41,7 +49,7 @@ export function AnalysisFilters({
         <div>
           <CardTitle className="text-lg">Filtros da analise</CardTitle>
           <p className="mt-2 text-sm text-slate-600">
-            Combine recortes de tempo, localidade e tipo de relatorio.
+            Combine recortes de tempo e indicador com leitura oficial do backend.
           </p>
         </div>
         <Button
@@ -79,7 +87,7 @@ export function AnalysisFilters({
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-            UF
+            Fonte
           </p>
           <Select
             value={filters.uf ?? ALL_VALUE}
@@ -88,10 +96,10 @@ export function AnalysisFilters({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todas as UFs" />
+              <SelectValue placeholder="Fonte oficial" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todas as UFs</SelectItem>
+              <SelectItem value={ALL_VALUE}>Fonte oficial</SelectItem>
               {options.ufs.map((uf) => (
                 <SelectItem key={uf} value={uf}>
                   {uf}
@@ -103,7 +111,7 @@ export function AnalysisFilters({
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Municipio
+            Indicador
           </p>
           <Select
             value={filters.municipality ?? ALL_VALUE}
@@ -112,13 +120,13 @@ export function AnalysisFilters({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todos os municipios" />
+              <SelectValue placeholder="Todos os indicadores" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todos os municipios</SelectItem>
+              <SelectItem value={ALL_VALUE}>Todos os indicadores</SelectItem>
               {options.municipalities.map((municipality) => (
                 <SelectItem key={municipality} value={municipality}>
-                  {municipality}
+                  {INDICATOR_LABELS[municipality] ?? municipality}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -127,7 +135,7 @@ export function AnalysisFilters({
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Setor censitario
+            Recorte territorial
           </p>
           <Select
             value={filters.censusSector ?? ALL_VALUE}
@@ -136,10 +144,10 @@ export function AnalysisFilters({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todos os setores" />
+              <SelectValue placeholder="Nível atual" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todos os setores</SelectItem>
+              <SelectItem value={ALL_VALUE}>Nível atual</SelectItem>
               {options.censusSectors.map((sector) => (
                 <SelectItem key={sector} value={sector}>
                   {sector}
@@ -163,10 +171,10 @@ export function AnalysisFilters({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todos os tipos" />
+              <SelectValue placeholder="Sem uso nesta leitura" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todos os tipos</SelectItem>
+              <SelectItem value={ALL_VALUE}>Sem uso nesta leitura</SelectItem>
               {options.reportTypes.map((reportType) => (
                 <SelectItem key={reportType} value={String(reportType)}>
                   Tipo {reportType}

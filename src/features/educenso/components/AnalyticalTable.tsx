@@ -1,3 +1,5 @@
+﻿import { memo } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { AnalyticalTableRow } from '@/types/educenso'
 
@@ -25,7 +27,7 @@ function formatPercent(value: number | null) {
   return `${value.toFixed(1)}%`
 }
 
-export function AnalyticalTable({ rows }: AnalyticalTableProps) {
+export const AnalyticalTable = memo(function AnalyticalTable({ rows }: AnalyticalTableProps) {
   return (
     <Card className="border-white/70 bg-white/88 backdrop-blur-sm">
       <CardHeader>
@@ -79,9 +81,20 @@ export function AnalyticalTable({ rows }: AnalyticalTableProps) {
                         Edu {row.likertEducacao.toFixed(2)} / Socio{' '}
                         {row.likertSocioeconomico.toFixed(2)}
                       </div>
+                      {row.sourceName ? (
+                        <div className="mt-1 text-xs text-cyan-700">
+                          {row.sourceName}
+                          {row.dataStatus ? ` • ${row.dataStatus}` : ''}
+                        </div>
+                      ) : null}
                       <div className="mt-1 text-xs text-slate-500">
                         {row.recommendationSummary}
                       </div>
+                      {row.warnings?.length ? (
+                        <div className="mt-1 text-xs text-amber-700">
+                          {row.warnings[0]}
+                        </div>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
@@ -89,11 +102,11 @@ export function AnalyticalTable({ rows }: AnalyticalTableProps) {
             </table>
           </div>
         ) : (
-          <p className="text-sm text-slate-600">
-            Nenhuma linha analitica encontrada para os filtros atuais.
-          </p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            Nenhuma linha analítica oficial foi encontrada para os filtros atuais.
+          </div>
         )}
       </CardContent>
     </Card>
   )
-}
+})

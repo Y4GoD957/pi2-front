@@ -1,3 +1,5 @@
+import { memo, useMemo } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { DashboardTrendPoint } from '@/types/educenso'
 
@@ -12,25 +14,19 @@ function buildPath(
   const values = points
     .map((point, index) => {
       const value = accessor(point)
-
-      if (value === null) {
-        return null
-      }
-
+      if (value === null) return null
       const x = points.length === 1 ? 0 : (index / (points.length - 1)) * 100
       const y = 100 - Math.min(100, Math.max(0, value))
-
       return `${x},${y}`
     })
     .filter((point): point is string => point !== null)
-
   return values.join(' ')
 }
 
-export function MetricLineChart({ data }: MetricLineChartProps) {
-  const enrollmentPath = buildPath(data, (point) => point.taxaMatricula)
-  const attendancePath = buildPath(data, (point) => point.taxaFrequenciaEscolar)
-  const illiteracyPath = buildPath(data, (point) => point.taxaAnalfabetismo)
+export const MetricLineChart = memo(function MetricLineChart({ data }: MetricLineChartProps) {
+  const enrollmentPath = useMemo(() => buildPath(data, (p) => p.taxaMatricula), [data])
+  const attendancePath = useMemo(() => buildPath(data, (p) => p.taxaFrequenciaEscolar), [data])
+  const illiteracyPath = useMemo(() => buildPath(data, (p) => p.taxaAnalfabetismo), [data])
 
   return (
     <Card className="border-white/70 bg-white/88 backdrop-blur-sm">
@@ -94,11 +90,11 @@ export function MetricLineChart({ data }: MetricLineChartProps) {
             </div>
           </>
         ) : (
-          <p className="text-sm text-slate-600">
-            Nao ha dados suficientes para desenhar a serie temporal.
-          </p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            Não há série histórica oficial suficiente para o indicador selecionado.
+          </div>
         )}
       </CardContent>
     </Card>
   )
-}
+})

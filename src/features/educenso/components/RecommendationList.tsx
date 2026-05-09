@@ -1,3 +1,5 @@
+﻿import { memo } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { PublicPolicyRecommendation } from '@/types/educenso'
 
@@ -14,7 +16,7 @@ const emphasisClassNames: Record<
   intersectoral: 'border-amber-200 bg-amber-50 text-amber-900',
 }
 
-export function RecommendationList({
+export const RecommendationList = memo(function RecommendationList({
   recommendations,
 }: RecommendationListProps) {
   return (
@@ -36,9 +38,19 @@ export function RecommendationList({
             <p className="mt-3 text-xs uppercase tracking-[0.16em] opacity-75">
               {recommendation.rationale}
             </p>
+            {recommendation.relatedTo?.length ? (
+              <p className="mt-3 text-xs opacity-80">
+                Relacionado a: {recommendation.relatedTo.join(', ')}
+              </p>
+            ) : null}
           </article>
         ))}
+        {!recommendations.length ? (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            Nenhuma recomendação adicional foi gerada para o indicador selecionado.
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   )
-}
+})
